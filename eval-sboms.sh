@@ -6,16 +6,20 @@ repo=https://github.com/spring-petclinic/spring-petclinic-rest
 commit=ee236caf798dde6ead7ab0726fb1cea96ca398ae     # Commit or tag to check out
 name=spring-petclinic-rest
 version=2.6.2
-image=springcommunity/spring-petclinic-rest:2.6.2   # Leave empty if there's no Docker image to scan
+image=                                              # Leave empty if there's no Docker image to scan
+# image=image=springcommunity/spring-petclinic-rest:2.6.2
 jar=$name-$version.jar
-executable_jar=true                                 # True if the JAR can be started with 'java -jar', false otherwise
+executable_jar=
+# executable_jar=true                                 # True if the JAR can be started with 'java -jar', false otherwise
 prj_path="."                                        # Relative path from Git to folder with pom.xml
 
 # Requirements:
 # - Git, Maven, Java, jq, and the following SBOM generators in subdir bin/
-# - https://github.com/eclipse/jbom/releases/
+# - https://github.com/eclipse  /jbom/releases/
 # - https://github.com/anchore/syft/releases/
 # - https://github.com/aquasecurity/trivy/releases
+
+LC_NUMERIC="en_US.UTF-8"
 
 RED="\e[1;31m"; GREEN="\e[1;32m"; WHITE="\e[1;37m"; RESET="\e[0m" # ANSI color codes, reset with --disable-color
 expected_mvn_scopes=("compile" "runtime") # Scopes expected in generated SBOMs, used to determine TP, FN and recall
@@ -146,7 +150,9 @@ function 1_clone() {
 function 2_deptree() {
     printf "\n2) Resolve dependencies declared in ${WHITE}%s${RESET}\n" "$pom"
     mvn -q dependency:tree -DoutputType=text -DoutputFile=2-deptree.txt -f "$pom" || { printf "   ${RED}ERROR${RESET}: mvn dependency:tree -pl ${WHITE}%s${RESET} failed\n" "$pom"; exit 1; }
-    mv "$dir/$prj_path/2-deptree.txt" "$dir/2-deptree.txt"
+    if [ "$prj_path" != "." ]; then
+        mv "$dir/$prj_path/2-deptree.txt" "$dir/2-deptree.txt"
+    fi
 
     # Info
     printf "\n   Raw text output in ${WHITE}%s${RESET} contains the following deps:\n" "$dir/2-deptree.txt"
@@ -160,6 +166,7 @@ function 2_deptree() {
     if [ -f "$dir/2-exp-purls.txt" ]; then
         rm "$dir/2-exp-purls.txt"
     fi
+
     for scope in "${expected_mvn_scopes[@]}" ; do
         # Make sure to catch deps with and without Maven classifier, as they have a different number of colon-separated elements, e.g.,
         # [INFO] +- org.eclipse.steady:shared:jar:3.2.6-SNAPSHOT:compile
@@ -224,12 +231,12 @@ function 3_sbom_after_clone() {
     # mv "$dir/jbom-$dir.json" "$dir/3-git-jbom-sbom.json"
 
     # Syft
-    run_sbom_generator "Syft" "./bin/syft packages dir:$dir --file $dir/3-git-syft-sbom.json -o cyclonedx-json > $dir/3-git-syft-sbom.log 2>&1"
-    find_purls_in_json_sbom "$dir/3-git-syft-sbom.json" "$dir/3-git-syft-purls.txt"
+    # run_sbom_generator "Syft" "./bin/syft scan dir:$dir -o cyclonedx-json=$dir/3-git-syft-sbom.json > $dir/3-git-syft-sbom.log 2>&1"
+    # find_purls_in_json_sbom "$dir/3-git-syft-sbom.json" "$dir/3-git-syft-purls.txt"
 
     # Trivy (offers plenty of options related to caching and connectivity, e.g., --skip-java-db-update, --offline-scan or --cache-dir)
-    run_sbom_generator "Trivy (triv)" "./bin/trivy fs --debug --format cyclonedx --output $dir/3-git-triv-sbom.json $dir > $dir/3-git-triv-sbom.log 2>&1"
-    find_purls_in_json_sbom "$dir/3-git-triv-sbom.json" "$dir/3-git-triv-purls.txt"
+    # run_sbom_generator "Trivy (triv)" "./bin/trivy fs --debug --format cyclonedx --output $dir/3-git-triv-sbom.json $dir > $dir/3-git-triv-sbom.log 2>&1"
+    # find_purls_in_json_sbom "$dir/3-git-triv-sbom.json" "$dir/3-git-triv-purls.txt"
 }
 
 # Runs "mvn -DskipTests package -f $dir/pom.xml" and produces JAR and 4-jartf.txt
@@ -255,7 +262,7 @@ function 5_sbom_after_package() {
     find_purls_in_json_sbom "$dir/5-pkg-jbom-sbom.json" "$dir/5-pkg-jbom-purls.txt"
 
     # Syft
-    run_sbom_generator "Syft" "./bin/syft packages file:$tgt_path/$jar --file $dir/5-pkg-syft-sbom.json -o cyclonedx-json > $dir/5-pkg-syft-sbom.log 2>&1"
+    run_sbom_generator "Syft" "./bin/syft scan file:$tgt_path/$jar -o cyclonedx-json=$dir/5-pkg-syft-sbom.json > $dir/5-pkg-syft-sbom.log 2>&1"
     find_purls_in_json_sbom "$dir/5-pkg-syft-sbom.json" "$dir/5-pkg-syft-purls.txt"
 
     # Trivy (disabled, because fs scans do not consider JARs, see https://aquasecurity.github.io/trivy/v0.37/docs/vulnerability/detection/language/)
@@ -270,7 +277,7 @@ function 6_sbom_with_image() {
         printf "\n6) Create SBOMs with Docker image ${WHITE}%s${RESET}\n" $image
 
         # Syft
-        run_sbom_generator "Syft" "./bin/syft packages $image --file $dir/6-img-syft-sbom.json -o cyclonedx-json > $dir/6-img-syft-sbom.log 2>&1"
+        run_sbom_generator "Syft" "./bin/syft scan $image -o cyclonedx-json=$dir/6-img-syft-sbom.json > $dir/6-img-syft-sbom.log 2>&1"
         find_purls_in_json_sbom "$dir/6-img-syft-sbom.json" "$dir/6-img-syft-purls.txt"
 
         # Trivy (--cache-dir ./bin/trivy-cache)
