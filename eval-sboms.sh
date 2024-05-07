@@ -3,21 +3,21 @@
 set -eo pipefail
 
 repo=https://github.com/spring-petclinic/spring-petclinic-rest
-commit=ee236caf798dde6ead7ab0726fb1cea96ca398ae     # Commit or tag to check out
+commit=ee236caf798dde6ead7ab0726fb1cea96ca398ae            # Commit or tag to check out
 name=spring-petclinic-rest
 version=2.6.2
-image=                                              # Leave empty if there's no Docker image to scan
+image=                                                     # Leave empty if there's no Docker image to scan
 # image=image=springcommunity/spring-petclinic-rest:2.6.2
 jar=$name-$version.jar
-executable_jar=
-# executable_jar=true                                 # True if the JAR can be started with 'java -jar', false otherwise
-prj_path="."                                        # Relative path from Git to folder with pom.xml
+executable_jar=false                                       # True if the JAR can be started with 'java -jar', false otherwise                       
+prj_path="."                                               # Relative path from Git to folder with pom.xml
 
 # Requirements:
 # - Git, Maven, Java, jq, and the following SBOM generators in subdir bin/
-# - https://github.com/eclipse  /jbom/releases/
+# - https://github.com/eclipse/jbom/releases/
 # - https://github.com/anchore/syft/releases/
-# - https://github.com/aquasecurity/trivy/releases
+# - https://docs.aws.amazon.com/inspector/latest/user/sbom-generator.html
+# - (optional) https://github.com/aquasecurity/trivy/releases
 
 LC_NUMERIC="en_US.UTF-8"
 
@@ -115,10 +115,14 @@ function check_prerequisites() {
         printf "\n   Syft - Download and extract binary from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://github.com/anchore/syft/releases" "./bin/syft"
         ok=false
     fi
-    if [ ! -f "./bin/trivy" ]; then
-        printf "\n   Trivy - Download and extract binary from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://github.com/aquasecurity/trivy/releases" "./bin/trivy"
+    if [ ! -f "./bin/sbomgen" ]; then
+        printf "\n   Sbomgen - Download and extract binary from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator.html" "./bin/sbomgem"
         ok=false
     fi
+    # if [ ! -f "./bin/trivy" ]; then
+    #     printf "\n   Trivy - Download and extract binary from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://github.com/aquasecurity/trivy/releases" "./bin/trivy"
+    #     ok=false
+    # fi
     if ! jq --help > /dev/null 2>&1; then
         printf "\n   jq - Install from ${WHITE}%s${RESET}" "https://stedolan.github.io/jq/"
         ok=false
@@ -217,7 +221,7 @@ function run_sbom_generator() {
     printf "   + ${WHITE}%s${RESET}\n" "$2"
 }
 
-# Runs CycloneDX Maven plugin, syft and trivy. Produces 3-git-$tool-sbom.json, 3-git-$tool-sbom.log, 3-git-$tool-purl.txt 
+# Runs CycloneDX Maven plugin, syft, sbomgen, and trivy. Produces 3-git-$tool-sbom.json, 3-git-$tool-sbom.log, 3-git-$tool-purl.txt 
 function 3_sbom_after_clone() {
     printf "\n3) Create SBOMs with directory\n"
 
@@ -233,6 +237,9 @@ function 3_sbom_after_clone() {
     # Syft
     # run_sbom_generator "Syft" "./bin/syft scan dir:$dir -o cyclonedx-json=$dir/3-git-syft-sbom.json > $dir/3-git-syft-sbom.log 2>&1"
     # find_purls_in_json_sbom "$dir/3-git-syft-sbom.json" "$dir/3-git-syft-purls.txt"
+
+    # Sbomgen
+    # todo
 
     # Trivy (offers plenty of options related to caching and connectivity, e.g., --skip-java-db-update, --offline-scan or --cache-dir)
     # run_sbom_generator "Trivy (triv)" "./bin/trivy fs --debug --format cyclonedx --output $dir/3-git-triv-sbom.json $dir > $dir/3-git-triv-sbom.log 2>&1"
@@ -252,7 +259,7 @@ function 4_package() {
     printf "   ${WHITE}%s${RESET} - Number of files in BOOT-INF/lib = ${WHITE}%d${RESET}\n" "$dir/4-jartf.txt" "$count"
 }
 
-# Runs jbom and syft on target/$jar. Produces: 5-pkg-$tool-sbom.json, 5-pkg-$tool-sbom.log, 5-pkg-$tool-purls.txt
+# Runs jbom, syft and sbomgen on target/$jar. Produces: 5-pkg-$tool-sbom.json, 5-pkg-$tool-sbom.log, 5-pkg-$tool-purls.txt
 function 5_sbom_after_package() {
     printf "\n5) Create SBOMs with JAR\n"
     
@@ -265,11 +272,14 @@ function 5_sbom_after_package() {
     run_sbom_generator "Syft" "./bin/syft scan file:$tgt_path/$jar -o cyclonedx-json=$dir/5-pkg-syft-sbom.json > $dir/5-pkg-syft-sbom.log 2>&1"
     find_purls_in_json_sbom "$dir/5-pkg-syft-sbom.json" "$dir/5-pkg-syft-purls.txt"
 
+    # Sbomgen
+    # todo
+
     # Trivy (disabled, because fs scans do not consider JARs, see https://aquasecurity.github.io/trivy/v0.37/docs/vulnerability/detection/language/)
     #./bin/trivy fs --format cyclonedx --output $dir/5-pkg-triv-sbom.json $tgt_path/$jar
 }
 
-# Runs syft and trivy on Docker $image. Produces: 6-img-$tool-sbom.json, 6-img-$tool-sbom.log, 6-img-$tool-purls.txt
+# Runs syft, sbomgen and trivy on Docker $image. Produces: 6-img-$tool-sbom.json, 6-img-$tool-sbom.log, 6-img-$tool-purls.txt
 function 6_sbom_with_image() {
     if [ -z "$image" ]; then
         printf "\n6) Skip creating SBOMs with Docker image\n"
@@ -279,6 +289,9 @@ function 6_sbom_with_image() {
         # Syft
         run_sbom_generator "Syft" "./bin/syft scan $image -o cyclonedx-json=$dir/6-img-syft-sbom.json > $dir/6-img-syft-sbom.log 2>&1"
         find_purls_in_json_sbom "$dir/6-img-syft-sbom.json" "$dir/6-img-syft-purls.txt"
+
+        # Sbomgen
+        # todo
 
         # Trivy (--cache-dir ./bin/trivy-cache)
         run_sbom_generator "Trivy (triv)" "./bin/trivy image --debug --format cyclonedx --output $dir/6-img-triv-sbom.json $image > $dir/6-img-triv-sbom.log 2>&1"
