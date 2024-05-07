@@ -42,12 +42,12 @@ be run at different lifecycle stages according to the following matrix (also see
 `./eval-sboms.sh --help`):
 
 ```
-Lifecycle Stage            | CycloneDX Maven Plugin | Eclipse jbom | Syft | Sbomgen | Trivy
--------------------------- | ---------------------- | ------------ | ---- | ------- | -----
-After git clone with dir   | x                      |              | x    | x       | x
-After mvn package with JAR |                        | x            | x    | x       |
-With Docker image          |                        |              | x    | x       |
-At JAR runtime             |                        | x            |      |         |
+Lifecycle Stage            | CycloneDX Maven Plugin | jbom | Syft | Sbomgen | Trivy
+-------------------------- | ---------------------- | ---- | ---- | ------- | -----
+After git clone with dir   | x                      |      | x    | x       | x
+After mvn package with JAR |                        | x    | x    | x       |
+With Docker image          |                        |      | x    | x       |
+At JAR runtime             |                        | x    |      |         |
 ```
 
 The script output is structured into several steps, e.g., cloning the project or
