@@ -103,7 +103,7 @@ exp_count=0 # No. expected components. Set in 2_deptree(), used to compute recal
 tgt_path="$dir/$prj_path/target"
 pom="$dir/$prj_path/pom.xml"
 
-# Checks whether ./bin/jbom.jar, syft and trivy exist.
+# Checks whether ./bin/jbom.jar, ./bin/syft, ./bin/sbomgen (and ./bin/trivy) exist.
 function check_prerequisites() {
     ok=true
     printf "Check prerequisites:"
@@ -119,6 +119,7 @@ function check_prerequisites() {
         printf "\n   Sbomgen - Download and extract binary from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator.html" "./bin/sbomgem"
         ok=false
     fi
+    # [skipped]
     # if [ ! -f "./bin/trivy" ]; then
     #     printf "\n   Trivy - Download and extract binary from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://github.com/aquasecurity/trivy/releases" "./bin/trivy"
     #     ok=false
@@ -234,14 +235,15 @@ function 3_sbom_after_clone() {
     # java -jar generators/jbom-1.2.1.jar --dir="$dir" --outputDir="$dir"
     # mv "$dir/jbom-$dir.json" "$dir/3-git-jbom-sbom.json"
 
-    # Syft
+    # Syft [skipped]
     # run_sbom_generator "Syft" "./bin/syft scan dir:$dir -o cyclonedx-json=$dir/3-git-syft-sbom.json > $dir/3-git-syft-sbom.log 2>&1"
     # find_purls_in_json_sbom "$dir/3-git-syft-sbom.json" "$dir/3-git-syft-purls.txt"
 
-    # Sbomgen
-    # todo
+    # Sbomgen [skipped] <<< For some yet undetermined reason, this works as expected in bash -- but _not_ here!?!
+    # run_sbom_generator "Sbomgen" "./bin/sbomgen directory --path $dir --disable-progress-bar --scan-sbom-output-format cyclonedx --outfile $dir/3-git-sbom-sbom.json > $dir/3-git-sbom-sbom.log 2>&1"
+    # find_purls_in_json_sbom "$dir/3-git-sbom-sbom.json" "$dir/3-git-sbom-purls.txt"
 
-    # Trivy (offers plenty of options related to caching and connectivity, e.g., --skip-java-db-update, --offline-scan or --cache-dir)
+    # Trivy (offers plenty of options related to caching and connectivity, e.g., --skip-java-db-update, --offline-scan or --cache-dir) [skipped]
     # run_sbom_generator "Trivy (triv)" "./bin/trivy fs --debug --format cyclonedx --output $dir/3-git-triv-sbom.json $dir > $dir/3-git-triv-sbom.log 2>&1"
     # find_purls_in_json_sbom "$dir/3-git-triv-sbom.json" "$dir/3-git-triv-purls.txt"
 }
@@ -264,7 +266,7 @@ function 5_sbom_after_package() {
     printf "\n5) Create SBOMs with JAR\n"
     
     # jbom
-    run_sbom_generator "jbom" "java -jar ./bin//jbom.jar --file=$tgt_path/$jar --outputDir=$dir > $dir/5-pkg-jbom-sbom.log 2>&1"
+    run_sbom_generator "jbom" "java -jar ./bin/jbom.jar --file=$tgt_path/$jar --outputDir=$dir > $dir/5-pkg-jbom-sbom.log 2>&1"
     mv "$dir/jbom-$name-$version.json" "$dir/5-pkg-jbom-sbom.json"
     find_purls_in_json_sbom "$dir/5-pkg-jbom-sbom.json" "$dir/5-pkg-jbom-purls.txt"
 
@@ -273,10 +275,11 @@ function 5_sbom_after_package() {
     find_purls_in_json_sbom "$dir/5-pkg-syft-sbom.json" "$dir/5-pkg-syft-purls.txt"
 
     # Sbomgen
-    # todo
+    run_sbom_generator "Sbomgen" "./bin/sbomgen localhost --path $tgt_path/$jar --scanners java-jar --disable-progress-bar --scan-sbom-output-format cyclonedx --outfile $dir/5-pkg-sbom-sbom.json > $dir/5-pkg-sbom-sbom.log 2>&1"
+    find_purls_in_json_sbom "$dir/5-pkg-sbom-sbom.json" "$dir/5-pkg-sbom-purls.txt"
 
     # Trivy (disabled, because fs scans do not consider JARs, see https://aquasecurity.github.io/trivy/v0.37/docs/vulnerability/detection/language/)
-    #./bin/trivy fs --format cyclonedx --output $dir/5-pkg-triv-sbom.json $tgt_path/$jar
+    # ./bin/trivy fs --format cyclonedx --output $dir/5-pkg-triv-sbom.json $tgt_path/$jar
 }
 
 # Runs syft, sbomgen and trivy on Docker $image. Produces: 6-img-$tool-sbom.json, 6-img-$tool-sbom.log, 6-img-$tool-purls.txt
@@ -291,7 +294,7 @@ function 6_sbom_with_image() {
         find_purls_in_json_sbom "$dir/6-img-syft-sbom.json" "$dir/6-img-syft-purls.txt"
 
         # Sbomgen
-        # todo
+        # (TODO)
 
         # Trivy (--cache-dir ./bin/trivy-cache)
         run_sbom_generator "Trivy (triv)" "./bin/trivy image --debug --format cyclonedx --output $dir/6-img-triv-sbom.json $image > $dir/6-img-triv-sbom.log 2>&1"
