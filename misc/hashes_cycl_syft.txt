@@ -35,7 +35,7 @@ cbbe1a62b0cc6c85972e99d52aaee350153dc530 com.sun.istack/istack-commons-runtime@3
 7d495522b08a9a66084bf417e70eedf95ef706bc ch.qos.logback/logback-classic@1.2.9 == ch.qos.logback/logback-classic@1.2.9 
 0d8ec10f8ed2d9ac8c400208f4f78a546b116afe org.hsqldb/hsqldb@2.5.2 <> org.hsqldb.hsqldb/hsqldb@2.5.2 
 a76f2fbe805bfd2798e20dc8f2cfbfad554d52da io.springfox/springfox-spring-web@3.0.0 <> springfox-spring-web/springfox-spring-web@3.0.0 
-8b4c7fa5562a09da1c2a9ab0873cb51f5034d83f net.bytebuddy/byte-buddy@1.11.22 <> t.bytebuddy/byte-buddy@1.11.22 
+8b4c7fa5562a09da1c2a9ab0873cb51f5034d83f net.bytebuddy/byte-buddy@1.11.22 == net.bytebuddy/byte-buddy@1.11.22 
 769c0b82cb2421c8256300e907298a9410a2a3d3 org.latencyutils/LatencyUtils@2.0.3 == org.latencyutils/LatencyUtils@2.0.3 
 b9dc3cc09643c0451a35bdc9327e80c4f5dfd354 org.springframework.security/spring-security-crypto@5.6.1 == org.springframework.security/spring-security-crypto@5.6.1 
 07be289f451cedf9e35ed97caba3953226b4e6d9 io.github.classgraph/classgraph@4.8.83 == io.github.classgraph/classgraph@4.8.83 
@@ -86,7 +86,7 @@ e59ffdbc6ad09eeb33507b39ffcf287679a498c8 org.hibernate.common/hibernate-commons-
 d6b0760dfffbf379cedd02f715ff4c9a2e215921 org.hibernate.validator/hibernate-validator@6.2.0.Final == org.hibernate.validator/hibernate-validator@6.2.0.Final 
 7ed22363fdfd651cd811c0b2391f16bddb91db8b io.springfox/springfox-spring-webmvc@3.0.0 <> springfox-spring-webmvc/springfox-spring-webmvc@3.0.0 
 40f5e834d6696ae1d3212fa5a2d5e1ec406bedc0 io.springfox/springfox-data-rest@3.0.0 <> springfox-data-rest/springfox-data-rest@3.0.0 
-83cd2cd674a217ade95a4bb83a8a14f351f48bd0 antlr/antlr@2.7.7 <> tlr/antlr@2.7.7 
+83cd2cd674a217ade95a4bb83a8a14f351f48bd0 antlr/antlr@2.7.7 == antlr/antlr@2.7.7 
 74548703f9851017ce2f556066659438019e7eb5 com.sun.activation/jakarta.activation@1.2.2 == com.sun.activation/jakarta.activation@1.2.2 
 5486365e263f8acca014b97efa50c3419d58e8f6 io.springfox/springfox-boot-starter@3.0.0 <> springfox-boot-starter/springfox-boot-starter@3.0.0 
 9ca7df660e875b91c78e3d1608d4d7469ad3470c org.postgresql/postgresql@42.3.1 == org.postgresql/postgresql@42.3.1 
