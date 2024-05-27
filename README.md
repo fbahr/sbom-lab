@@ -9,32 +9,31 @@ reported), false-negatives (components missing in the SBOM) and
 [recall](https://en.wikipedia.org/wiki/Precision_and_recall).  
 
 Notes:
-- The SBOM generators considered are
+- The SBOM generators considered are the
+  [CycloneDX Maven Plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin),
   [jbom](https://github.com/eclipse/jbom/),
   [Syft](https://github.com/anchore/syft/),
-  [Sbomgen](https://aws.amazon.com/blogs/security/identify-java-nested-dependencies-with-amazon-inspector-sbom-generator/),
-  [Trivy](https://github.com/aquasecurity/trivy/) and the
-  [CycloneDX Maven Plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin).
+  [Sbomgen](https://docs.aws.amazon.com/inspector/latest/user/sbom-generator.html),
+  [cdxgen](https://cyclonedx.github.io/cdxgen/#/),
+  and [Trivy](https://github.com/aquasecurity/trivy/).
 - Per default, the script only considers Maven dependencies with scope `compile`
   and `runtime`.
 - The evaluation relies on component PURLs only. Other identifiers such as the
-simple component name or digest, where present, are not considered.
+  simple component name or digest, where present, are not considered.
 
 ## Prerequisites
 
 - Git
 - Java and Maven (the required versions depend on the project analyzed)
 - [jq v1.6](https://stedolan.github.io/jq/)
-- SBOM generators `bin/jbom.jar`, `bin/syft`, `bin/sbomgen` and - optionally - `bin/trivy` (see the respective download page)
+- SBOM generators `bin/jbom.jar`, `bin/syft`, `bin/sbomgen`, `/usr/bin/cdxgen` and `bin/trivy` (see the respective download page)
 
 ## Run the script
 
-Details of the Maven project to be analyzed are specified through shell
-variables in the header of the script.
+Details of the Maven project to be analyzed are specified through shell variables in the header of the script.
 
-The current values point to [Spring Boot PetClinic](https://github.com/spring-petclinic/spring-petclinic-rest)
-(REST) v2.6.2, which produces an executable JAR and which has also been published on
-Docker Hub. 
+The current values point to [Spring Boot PetClinic](https://github.com/spring-petclinic/spring-petclinic-rest) (REST) v2.6.2,
+which produces an executable JAR and which has also been published on Docker Hub. 
 
 Starting the script via `./eval-sboms.sh --dir pet` will create a new folder
 `pet` into which the project will be cloned and where the SBOM generators will
@@ -42,12 +41,12 @@ be run at different lifecycle stages according to the following matrix (also see
 `./eval-sboms.sh --help`):
 
 ```
-Lifecycle Stage            | CycloneDX Maven Plugin | jbom | Syft | Sbomgen | Trivy
--------------------------- | ---------------------- | ---- | ---- | ------- | -----
-After git clone with dir   | x                      |      | x    | x       | x
-After mvn package with JAR |                        | x    | x    | x       |
-With Docker image          |                        |      | x    | x       |
-At JAR runtime             |                        | x    |      |         |
+Lifecycle Stage            | CycloneDX Maven Plugin | Eclipse jbom | Syft | Sbomgen | cdxgen | Trivy
+-------------------------- | ---------------------- | ------------ | ---- | ------- | ------ | -----
+After git clone with dir   | x                      |              | x    | x       | x      | x    
+After mvn package with JAR |                        | x            | x    | x       | x      |      
+With Docker image          |                        |              | x    | x       | x      | x    
+At JAR runtime             |                        | x            |      |         |        |      
 ```
 
 The script output is structured into several steps, e.g., cloning the project or
