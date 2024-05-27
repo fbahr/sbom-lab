@@ -154,7 +154,7 @@ function 1_clone() {
 # "2-exp-purls.txt" (sorted).
 function 2_deptree() {
     printf "\n2) Resolve dependencies declared in ${WHITE}%s${RESET}\n" "$pom"
-    mvn -q dependency:tree -DoutputType=text -DoutputFile=2-deptree.txt -f "$pom" || { printf "   ${RED}ERROR${RESET}: mvn dependency:tree -pl ${WHITE}%s${RESET} failed\n" "$pom"; exit 1; }
+    mvn -q dependency:tree -DoutputType=text -DoutputFile=2-deptree.txt -f "$pom" || { printf "   ${RED}ERROR${RESET}: mvn dependency:tree -f ${WHITE}%s${RESET} failed\n" "$pom"; exit 1; }
     if [ "$prj_path" != "." ]; then
         mv "$dir/$prj_path/2-deptree.txt" "$dir/2-deptree.txt"
     fi
