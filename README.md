@@ -42,7 +42,7 @@ be run at different lifecycle stages according to the following matrix (also see
 
 ```
 Lifecycle Stage            | CycloneDX Maven Plugin | jbom | Syft | Sbomgen | cdxgen | Trivy
--------------------------- | ---------------------- | ------------ | ---- | ------- | ------ | -----
+-------------------------- | ---------------------- | ---- | ---- | ------- | ------ | -----
 After git clone with dir   | x                      |      | x    | x       | x      | x    
 After mvn package with JAR |                        | x    | x    | x       | x      |      
 With Docker image          |                        |      | x    | x       | x      | x    
