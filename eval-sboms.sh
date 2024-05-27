@@ -17,6 +17,7 @@ prj_path="."                                               # Relative path from 
 # - https://github.com/eclipse/jbom/releases/
 # - https://github.com/anchore/syft/releases/
 # - https://docs.aws.amazon.com/inspector/latest/user/sbom-generator.html
+# - https://github.com/CycloneDX/cdxgen
 # - (optional) https://github.com/aquasecurity/trivy/releases
 
 LC_NUMERIC="en_US.UTF-8"
@@ -37,12 +38,12 @@ function help() {
     printf -- "       --keep-git        Keep the repo's .git folder\n"
     printf -- "   -s, --sbom            Extra SBOM in CylconeDX format to evaluate,\n"
     printf -- "                         e.g., downloaded from a commercial generator\n\n" 
-    printf -- "Lifecycle Stage            | CycloneDX Maven Plugin | jbom | Syft | Sbomgen | Trivy\n"
-    printf -- "-------------------------- | ---------------------- | ---- | ---- | ------- | -----\n"
-    printf -- "After git clone with dir   | x                      |      | x    | x       | x    \n"
-    printf -- "After mvn package with JAR |                        | x    | x    | x       |      \n"
-    printf -- "With Docker image          |                        |      | x    | x       | x    \n"
-    printf -- "At JAR runtime             |                        | x    |      |         |      \n\n"
+    printf -- "Lifecycle Stage            | CycloneDX Maven Plugin | jbom | Syft | Sbomgen | cdxgen | Trivy\n"
+    printf -- "-------------------------- | ---------------------- | ---- | ---- | ------- | ------ | -----\n"
+    printf -- "After git clone with dir   | x                      |      | x    | x       | x      | x    \n"
+    printf -- "After mvn package with JAR |                        | x    | x    | x       | x      |      \n"
+    printf -- "With Docker image          |                        |      | x    | x       | x      | x    \n"
+    printf -- "At JAR runtime             |                        | x    |      |         |        |      \n\n"
     printf -- "Each SBOM generation produces 3 files:\n"
     printf -- "- SBOM in CycloneDX format: <step>-<stage>-<tool>-sbom.json\n"
     printf -- "- Text file with all PURLS: <step>-<stage>-<tool>-purls.txt\n"
@@ -103,7 +104,7 @@ exp_count=0 # No. expected components. Set in 2_deptree(), used to compute recal
 tgt_path="$dir/$prj_path/target"
 pom="$dir/$prj_path/pom.xml"
 
-# Checks whether ./bin/jbom.jar, ./bin/syft, ./bin/sbomgen (and ./bin/trivy) exist.
+# Checks whether ./bin/jbom.jar, ./bin/syft, ./bin/sbomgen, /usr/bin/cdxgen (and ./bin/trivy) exist.
 function check_prerequisites() {
     ok=true
     printf "Check prerequisites:"
@@ -117,6 +118,10 @@ function check_prerequisites() {
     fi
     if [ ! -f "./bin/sbomgen" ]; then
         printf "\n   Sbomgen - Download and extract binary from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator.html" "./bin/sbomgem"
+        ok=false
+    fi
+    if [ ! -f "/usr/bin/cdxgen" ]; then
+        printf "\n   cdxgen - Install binary following the instructions provided at https://cyclonedx.github.io/cdxgen/#/"
         ok=false
     fi
     # [skipped]
@@ -222,7 +227,7 @@ function run_sbom_generator() {
     printf "   + ${WHITE}%s${RESET}\n" "$2"
 }
 
-# Runs CycloneDX Maven plugin, syft, sbomgen, and trivy. Produces 3-git-$tool-sbom.json, 3-git-$tool-sbom.log, 3-git-$tool-purl.txt 
+# Runs CycloneDX Maven plugin, syft, sbomgen, cdxgen, and trivy. Produces 3-git-$tool-sbom.json, 3-git-$tool-sbom.log, 3-git-$tool-purl.txt 
 function 3_sbom_after_clone() {
     printf "\n3) Create SBOMs with directory\n"
 
@@ -242,6 +247,9 @@ function 3_sbom_after_clone() {
     # Sbomgen [skipped] <<< For some yet undetermined reason, this works as expected in bash -- but _not_ here!?!
     # run_sbom_generator "Sbomgen" "./bin/sbomgen directory --path $dir --disable-progress-bar --scan-sbom-output-format cyclonedx --outfile $dir/3-git-sbom-sbom.json > $dir/3-git-sbom-sbom.log 2>&1"
     # find_purls_in_json_sbom "$dir/3-git-sbom-sbom.json" "$dir/3-git-sbom-purls.txt"
+    
+    # cdxgen [skipped]
+    # (TODO)
 
     # Trivy (offers plenty of options related to caching and connectivity, e.g., --skip-java-db-update, --offline-scan or --cache-dir) [skipped]
     # run_sbom_generator "Trivy (triv)" "./bin/trivy fs --debug --format cyclonedx --output $dir/3-git-triv-sbom.json $dir > $dir/3-git-triv-sbom.log 2>&1"
@@ -261,7 +269,7 @@ function 4_package() {
     printf "   ${WHITE}%s${RESET} - Number of files in BOOT-INF/lib = ${WHITE}%d${RESET}\n" "$dir/4-jartf.txt" "$count"
 }
 
-# Runs jbom, syft and sbomgen on target/$jar. Produces: 5-pkg-$tool-sbom.json, 5-pkg-$tool-sbom.log, 5-pkg-$tool-purls.txt
+# Runs jbom, syft, sbomgen, and cdxgen on target/$jar. Produces: 5-pkg-$tool-sbom.json, 5-pkg-$tool-sbom.log, 5-pkg-$tool-purls.txt
 function 5_sbom_after_package() {
     printf "\n5) Create SBOMs with JAR\n"
     
@@ -277,6 +285,10 @@ function 5_sbom_after_package() {
     # Sbomgen
     run_sbom_generator "Sbomgen" "./bin/sbomgen localhost --path $tgt_path/$jar --scanners java-jar --disable-progress-bar --scan-sbom-output-format cyclonedx --outfile $dir/5-pkg-sbom-sbom.json > $dir/5-pkg-sbom-sbom.log 2>&1"
     find_purls_in_json_sbom "$dir/5-pkg-sbom-sbom.json" "$dir/5-pkg-sbom-purls.txt"
+    
+    # cdxgen
+    run_sbom_generator "cdxgen" "/usr/bin/cdxgen --print false -t jar $tgt_path/$jar --output $dir/5-pkg-cdxg-sbom.json > $dir/5-pkg-cdxg-sbom.log 2>&1"
+    find_purls_in_json_sbom "$dir/5-pkg-cdxg-sbom.json" "$dir/5-pkg-cdxg-purls.txt"
 
     # Trivy (disabled, because fs scans do not consider JARs, see https://aquasecurity.github.io/trivy/v0.37/docs/vulnerability/detection/language/)
     # ./bin/trivy fs --format cyclonedx --output $dir/5-pkg-triv-sbom.json $tgt_path/$jar
@@ -294,6 +306,9 @@ function 6_sbom_with_image() {
         find_purls_in_json_sbom "$dir/6-img-syft-sbom.json" "$dir/6-img-syft-purls.txt"
 
         # Sbomgen
+        # (TODO)
+        
+        # cdxgen
         # (TODO)
 
         # Trivy (--cache-dir ./bin/trivy-cache)
