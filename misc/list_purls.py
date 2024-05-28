@@ -14,12 +14,12 @@ if __name__ == "__main__":
             purls = set()
             for c in cdxreport.get("components",[]):
                 if c.get("purl"):
-                    purls.add(c["purl"].removeprefix("pkg:maven/").removesuffix("?type=jar"))
+                    purls.add(c["purl"].removeprefix("pkg:maven/").removesuffix("?type=jar").removesuffix("?type=war"))
                 else:
                     print(f"Component {c['name']} misses a PURL value!", file=sys.stderr)
 
             for c in cdxreport.get("dependencies",[]):
-                ref = c["ref"].removeprefix("pkg:maven/").removesuffix("?type=jar")
+                ref = c["ref"].removeprefix("pkg:maven/").removesuffix("?type=jar").removesuffix("?type=war")
                 if ":" in ref:
                     tokens = ref.rsplit(":",1)
                     tokens[0] = tokens[0].replace(":","/")
@@ -27,7 +27,7 @@ if __name__ == "__main__":
                 purls.add(ref)
 
                 for d in c["dependsOn"]:
-                    dep = d.removeprefix("pkg:maven/").removesuffix("?type=jar")
+                    dep = d.removeprefix("pkg:maven/").removesuffix("?type=jar").removesuffix("?type=war")
                     if ":" in dep:
                         tokens = dep.rsplit(":",1)
                         tokens[0] = tokens[0].replace(":","/")
@@ -39,7 +39,12 @@ if __name__ == "__main__":
 
             purls_dict = {}
             for purl in purls:
-                pkg, version = purl.rsplit("@",1)
+                tokens = purl.rsplit("@",1)
+                if len(tokens) == 2:
+                    pkg, version = tokens[0], tokens[1]
+                else:
+                    print(f"PURL with invalid pkg/ver scheme: {purl}!", file=sys.stderr)
+                    pkg, version = tokens[0], "null"
                 if purls_dict.get(pkg):
                     purls_dict[pkg].add(version)
                 else:

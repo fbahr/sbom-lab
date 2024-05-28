@@ -22,25 +22,33 @@ if __name__ == "__main__":
                    print(f"Component {c['name']} misses a SHA-1 hash!", file=sys.stderr)
                    continue
 
-                purl = None
-                property = [p for p in c["properties"] if p.get("name") and p["name"] == "maven" and p.get("value") and p["value"].startswith("https://search.maven.org/search?")] if c.get("properties") else []
-                if property:
-                    # Hot-fix for jbom SBOMs...
-                    response = requests.get(f"https://search.maven.org/solrsearch/select?q=1:{hash}&rows=1&wt=json")
-                    response.close()
-                    if response.status_code == 200:
-                        rjson = response.json()
-                        if rjson and rjson.get("response") and rjson["response"].get("docs"):
-                           descr = rjson["response"]["docs"][0]
-                           purl = f"{descr['g']}/{descr['a']}@{descr['v']}"
-                    else:
-                        print(f"{c['name']} > {response=}", file=sys.stderr)
-                elif c.get("purl"):
-                    purl = c["purl"].removeprefix("pkg:maven/").removesuffix("?type=jar")
-
-                if not purl:
-                    print(f"Component \"{c['name']}\" misses a valid PURL!", file=sys.stderr)
+                if c.get("purl"):
+                    purl = c["purl"].removeprefix("pkg:maven/").removesuffix("?type=jar").removesuffix("?type=war")
+                else:
                     purl = c["name"]
+                    property = [p for p in c["properties"] if p.get("name") and p["name"] == "maven" and p.get("value") and p["value"].startswith("https://search.maven.org/search?")] if c.get("properties") else []
+                    if property:
+                        # Fall-back...
+                        response = requests.get(f"https://search.maven.org/solrsearch/select?q=1:{hash}&rows=2&wt=json")
+                        response.close()
+                        if response.status_code == 200:
+                            rjson = response.json()
+                            if rjson and rjson.get("response") and rjson["response"].get("docs"):
+                                num_descr = len(rjson["response"]["docs"])
+                                if num_descr == 0:
+                                    print(f"Failed to look up PURL for component {c['name']} with {hash=}!", file=sys.stderr)
+                                elif num_descr == 1:
+                                    descr = rjson["response"]["docs"][0]
+                                    print(f"PURL for component {c['name']} should be {descr['g']}/{descr['a']}@{descr['v']}!", file=sys.stderr)
+                                else:
+                                    print(f"Conflicting PURL resolutions for component {c['name']} with {hash=}!", file=sys.stderr)
+
+                            else:
+                                print(f"PURL lookup for {c['name']} failed! > ...", file=sys.stderr)
+                        else:
+                            print(f"PURL lookup for {c['name']} failed! > {response=}", file=sys.stderr)
+                    else:
+                        print(f"Component \"{c['name']}\" misses a valid PURL!", file=sys.stderr)
 
                 report["components"][hash] = purl
     
