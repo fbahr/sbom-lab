@@ -247,9 +247,10 @@ function 3_sbom_after_clone() {
     # Sbomgen [skipped] <<< For some yet undetermined reason, this works as expected in bash -- but _not_ here!?!
     # run_sbom_generator "Sbomgen" "./bin/sbomgen directory --path $dir --disable-progress-bar --scan-sbom-output-format cyclonedx --outfile $dir/3-git-sbom-sbom.json > $dir/3-git-sbom-sbom.log 2>&1"
     # find_purls_in_json_sbom "$dir/3-git-sbom-sbom.json" "$dir/3-git-sbom-purls.txt"
-    
-    # cdxgen [skipped]
-    # (TODO)
+
+    # cdxgen
+    run_sbom_generator "cdxgen" "/usr/bin/cdxgen --print false -t java $dir/$prj_path --output $dir/3-git-cdxg-sbom.json > $dir/3-git-cdxg-sbom.log 2>&1"
+    find_purls_in_json_sbom "$dir/3-git-cdxg-sbom.json" "$dir/3-git-cdxg-purls.txt"
 
     # Trivy (offers plenty of options related to caching and connectivity, e.g., --skip-java-db-update, --offline-scan or --cache-dir) [skipped]
     # run_sbom_generator "Trivy (triv)" "./bin/trivy fs --debug --format cyclonedx --output $dir/3-git-triv-sbom.json $dir > $dir/3-git-triv-sbom.log 2>&1"
