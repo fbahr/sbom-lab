@@ -233,7 +233,7 @@ function 3_sbom_after_clone() {
 
     # CycloneDX
     run_sbom_generator "CycloneDX (cycl)" "mvn -DoutputFormat=json -DoutputDirectory=$dir -DoutputName=3-git-cycl-sbom org.cyclonedx:cyclonedx-maven-plugin:2.7.5:makeBom -f $dir/pom.xml > $dir/3-git-cycl-sbom.log 2>&1"
-    mv ""$tgt_path"/3-git-cycl-sbom.json" "$dir"
+    mv "$tgt_path/3-git-cycl-sbom.json" "$dir"
     find_purls_in_json_sbom "$dir/3-git-cycl-sbom.json" "$dir/3-git-cycl-purls.txt"
 
     # jbom (disabled, since it requires JARs)
