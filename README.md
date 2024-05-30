@@ -11,6 +11,7 @@ reported), false-negatives (components missing in the SBOM) and
 Notes:
 - The SBOM generators considered are the
   [CycloneDX Maven Plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin),
+  [build-info-go](https://github.com/jfrog/build-info-go),
   [jbom](https://github.com/eclipse/jbom/),
   [Syft](https://github.com/anchore/syft/),
   [Sbomgen](https://docs.aws.amazon.com/inspector/latest/user/sbom-generator.html),
@@ -26,7 +27,7 @@ Notes:
 - Git
 - Java and Maven (the required versions depend on the project analyzed)
 - [jq v1.6](https://stedolan.github.io/jq/)
-- SBOM generators `bin/jbom.jar`, `bin/syft`, `bin/sbomgen`, `/usr/bin/cdxgen` and `bin/trivy` (see the respective download page)
+- SBOM generators `bin/bi`, `bin/jbom.jar`, `bin/syft`, `bin/sbomgen`, `/usr/bin/cdxgen` and `bin/trivy` (see the respective download page)
 
 ## Run the script
 
@@ -41,12 +42,12 @@ be run at different lifecycle stages according to the following matrix (also see
 `./eval-sboms.sh --help`):
 
 ```
-Lifecycle Stage            | CycloneDX Maven Plugin | jbom | Syft | Sbomgen | cdxgen | Trivy
--------------------------- | ---------------------- | ---- | ---- | ------- | ------ | -----
-After git clone with dir   | x                      |      | x    | x       | x      | x    
-After mvn package with JAR |                        | x    | x    | x       | x      |      
-With Docker image          |                        |      | x    | x       | x      | x    
-At JAR runtime             |                        | x    |      |         |        |      
+Lifecycle Stage            | CycloneDX Maven Plugin | build-info-go | jbom | Syft | Sbomgen | cdxgen | Trivy
+-------------------------- | ---------------------- | ------------- | ---- | ---- | ------- | ------ | -----
+After git clone with dir   | x                      | x             |      | x    | x       | x      | x    
+After mvn package with JAR |                        |               | x    | x    | x       | x      |      
+With Docker image          |                        |               |      | x    | x       | x      | x    
+At JAR runtime             |                        |               | x    |      |         |        |      
 ```
 
 The script output is structured into several steps, e.g., cloning the project or
