@@ -10,10 +10,11 @@ image=                                                     # Leave empty if ther
 # image=image=springcommunity/spring-petclinic-rest:2.6.2
 jar=$name-$version.jar
 executable_jar=false                                       # True if the JAR can be started with 'java -jar', false otherwise                       
-prj_path="."                                               # Relative path from Git to folder with pom.xml
+prj_path=.                                               # Relative path from Git to folder with pom.xml
 
 # Requirements:
 # - Git, Maven, Java, jq, and the following SBOM generators in subdir bin/
+# - https://github.com/jfrog/build-info-go
 # - https://github.com/eclipse/jbom/releases/
 # - https://github.com/anchore/syft/releases/
 # - https://docs.aws.amazon.com/inspector/latest/user/sbom-generator.html
@@ -38,12 +39,12 @@ function help() {
     printf -- "       --keep-git        Keep the repo's .git folder\n"
     printf -- "   -s, --sbom            Extra SBOM in CylconeDX format to evaluate,\n"
     printf -- "                         e.g., downloaded from a commercial generator\n\n" 
-    printf -- "Lifecycle Stage            | CycloneDX Maven Plugin | jbom | Syft | Sbomgen | cdxgen | Trivy\n"
-    printf -- "-------------------------- | ---------------------- | ---- | ---- | ------- | ------ | -----\n"
-    printf -- "After git clone with dir   | x                      |      | x    | x       | x      | x    \n"
-    printf -- "After mvn package with JAR |                        | x    | x    | x       | x      |      \n"
-    printf -- "With Docker image          |                        |      | x    | x       | x      | x    \n"
-    printf -- "At JAR runtime             |                        | x    |      |         |        |      \n\n"
+    printf -- "Lifecycle Stage            | CycloneDX Maven Plugin | build-info-go | jbom | Syft | Sbomgen | cdxgen | Trivy\n"
+    printf -- "-------------------------- | ---------------------- | ------------- | ---- | ---- | ------- | ------ | -----\n"
+    printf -- "After git clone with dir   | x                      | x             |      | x    | x       | x      | x    \n"
+    printf -- "After mvn package with JAR |                        |               | x    | x    | x       | x      |      \n"
+    printf -- "With Docker image          |                        |               |      | x    | x       | x      | x    \n"
+    printf -- "At JAR runtime             |                        |               | x    |      |         |        |      \n\n"
     printf -- "Each SBOM generation produces 3 files:\n"
     printf -- "- SBOM in CycloneDX format: <step>-<stage>-<tool>-sbom.json\n"
     printf -- "- Text file with all PURLS: <step>-<stage>-<tool>-purls.txt\n"
@@ -104,10 +105,15 @@ exp_count=0 # No. expected components. Set in 2_deptree(), used to compute recal
 tgt_path="$dir/$prj_path/target"
 pom="$dir/$prj_path/pom.xml"
 
-# Checks whether ./bin/jbom.jar, ./bin/syft, ./bin/sbomgen, /usr/bin/cdxgen (and ./bin/trivy) exist.
+# Checks whether ./bin/jbom.jar, ./bin/syft, ./bin/bi, ./bin/sbomgen, /usr/bin/cdxgen (and ./bin/trivy) exist.
 function check_prerequisites() {
     ok=true
     printf "Check prerequisites:"
+
+    if [ ! -f "./bin/bi" ]; then
+        printf "\n   build-info-go - Download JAR from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://github.com/jfrog/build-info-go" "./bin/bi"
+        ok=false
+    fi
     if [ ! -f "./bin/jbom.jar" ]; then
         printf "\n   Eclipse jbom - Download JAR from ${WHITE}%s${RESET} to ${WHITE}%s${RESET}" "https://github.com/eclipse/jbom/releases" "./bin/jbom.jar"
         ok=false
@@ -154,9 +160,8 @@ function 1_clone() {
     cd "$cwd" || exit
 }
 
-# Saves the raw output of "mvn dependency:tree" in "2-deptree.txt". Extracts all
-# dependencies with $expected_mvn_scopes and saves corresponding PURLs in
-# "2-exp-purls.txt" (sorted).
+# Saves the raw output of "mvn dependency:tree" in "2-deptree.txt". Extracts all dependencies
+# with $expected_mvn_scopes and saves corresponding PURLs in "2-exp-purls.txt" (sorted).
 function 2_deptree() {
     printf "\n2) Resolve dependencies declared in ${WHITE}%s${RESET}\n" "$pom"
     mvn -q dependency:tree -DoutputType=text -DoutputFile=2-deptree.txt -f "$pom" || { printf "   ${RED}ERROR${RESET}: mvn dependency:tree -f ${WHITE}%s${RESET} failed\n" "$pom"; exit 1; }
@@ -227,18 +232,23 @@ function run_sbom_generator() {
     printf "   + ${WHITE}%s${RESET}\n" "$2"
 }
 
-# Runs CycloneDX Maven plugin, syft, sbomgen, cdxgen, and trivy. Produces 3-git-$tool-sbom.json, 3-git-$tool-sbom.log, 3-git-$tool-purl.txt 
+# Runs CycloneDX Maven plugin, build-info-go, Syft, Sbomgen, cdxgen, and Trivy.
+# Produces 3-git-$tool-sbom.json, 3-git-$tool-sbom.log, 3-git-$tool-purl.txt 
 function 3_sbom_after_clone() {
     printf "\n3) Create SBOMs with directory\n"
-
+    
     # CycloneDX
-    run_sbom_generator "CycloneDX (cycl)" "mvn -DoutputFormat=json -DoutputDirectory=$dir -DoutputName=3-git-cycl-sbom org.cyclonedx:cyclonedx-maven-plugin:2.7.5:makeBom -f $dir/pom.xml > $dir/3-git-cycl-sbom.log 2>&1"
-    mv "$tgt_path/3-git-cycl-sbom.json" "$dir"
+    run_sbom_generator "CycloneDX (cycl)" "mvn -DoutputFormat=json -DoutputName=3-git-cycl-sbom org.cyclonedx:cyclonedx-maven-plugin:2.8.0:makeBom -f $dir/pom.xml > $dir/3-git-cycl-sbom.log 2>&1"
+    mv "$tgt_path"/3-git-cycl-sbom.* "$dir"
     find_purls_in_json_sbom "$dir/3-git-cycl-sbom.json" "$dir/3-git-cycl-purls.txt"
-
-    # jbom (disabled, since it requires JARs)
-    # java -jar generators/jbom-1.2.1.jar --dir="$dir" --outputDir="$dir"
-    # mv "$dir/jbom-$dir.json" "$dir/3-git-jbom-sbom.json"
+ 
+    # build-info-go [skipped]
+    # current=$(pwd)
+    # run_sbom_generator "build-info-go" "pushd $$dir/$prj_path > /dev/null; $current/bin/bi mvn --format cyclonedx/json > 3-git-bigo-sbom.json 2> 3-git-bigo-sbom.log; popd > /dev/null"
+    # if [ "$prj_path" != "." ]; then
+    #     mv "$dir"/"$prj_path"/3-git-bigo-sbom.* "$dir"
+    # fi
+    # find_purls_in_json_sbom "$dir/3-git-bigo-sbom.json" "$dir/3-git-bigo-purls.txt" 
 
     # Syft [skipped]
     # run_sbom_generator "Syft" "./bin/syft scan dir:$dir -o cyclonedx-json=$dir/3-git-syft-sbom.json > $dir/3-git-syft-sbom.log 2>&1"
@@ -248,9 +258,9 @@ function 3_sbom_after_clone() {
     # run_sbom_generator "Sbomgen" "./bin/sbomgen directory --path $dir --disable-progress-bar --scan-sbom-output-format cyclonedx --outfile $dir/3-git-sbom-sbom.json > $dir/3-git-sbom-sbom.log 2>&1"
     # find_purls_in_json_sbom "$dir/3-git-sbom-sbom.json" "$dir/3-git-sbom-purls.txt"
 
-    # cdxgen
-    run_sbom_generator "cdxgen" "/usr/bin/cdxgen --print false -t java $dir/$prj_path --output $dir/3-git-cdxg-sbom.json > $dir/3-git-cdxg-sbom.log 2>&1"
-    find_purls_in_json_sbom "$dir/3-git-cdxg-sbom.json" "$dir/3-git-cdxg-purls.txt"
+    # cdxgen [skipped]
+    # run_sbom_generator "cdxgen" "/usr/bin/cdxgen --print false -t java $dir/$prj_path --output $dir/3-git-cdxg-sbom.json > $dir/3-git-cdxg-sbom.log 2>&1"
+    # find_purls_in_json_sbom "$dir/3-git-cdxg-sbom.json" "$dir/3-git-cdxg-purls.txt"
 
     # Trivy (offers plenty of options related to caching and connectivity, e.g., --skip-java-db-update, --offline-scan or --cache-dir) [skipped]
     # run_sbom_generator "Trivy (triv)" "./bin/trivy fs --debug --format cyclonedx --output $dir/3-git-triv-sbom.json $dir > $dir/3-git-triv-sbom.log 2>&1"
@@ -270,7 +280,8 @@ function 4_package() {
     printf "   ${WHITE}%s${RESET} - Number of files in BOOT-INF/lib = ${WHITE}%d${RESET}\n" "$dir/4-jartf.txt" "$count"
 }
 
-# Runs jbom, syft, sbomgen, and cdxgen on target/$jar. Produces: 5-pkg-$tool-sbom.json, 5-pkg-$tool-sbom.log, 5-pkg-$tool-purls.txt
+# Runs jbom, Syft, Sbomgen, and cdxgen on target/$jar.
+# Produces: 5-pkg-$tool-sbom.json, 5-pkg-$tool-sbom.log, 5-pkg-$tool-purls.txt
 function 5_sbom_after_package() {
     printf "\n5) Create SBOMs with JAR\n"
     
@@ -295,7 +306,8 @@ function 5_sbom_after_package() {
     # ./bin/trivy fs --format cyclonedx --output $dir/5-pkg-triv-sbom.json $tgt_path/$jar
 }
 
-# Runs syft, sbomgen and trivy on Docker $image. Produces: 6-img-$tool-sbom.json, 6-img-$tool-sbom.log, 6-img-$tool-purls.txt
+# Runs Syft, Sbomgen and Trivy on Docker $image.
+# Produces: 6-img-$tool-sbom.json, 6-img-$tool-sbom.log, 6-img-$tool-purls.txt
 function 6_sbom_with_image() {
     if [ -z "$image" ]; then
         printf "\n6) Skip creating SBOMs with Docker image\n"
@@ -318,7 +330,8 @@ function 6_sbom_with_image() {
     fi
 }
 
-# Runs "java -jar target/$jar" and attaches jbom to the pid. Produces: 7-run-$tool-sbom.json, 7-run-$tool-sbom.log, 7-run-$tool-purls.txt
+# Runs "java -jar target/$jar" and attaches jbom to the pid.
+# Produces: 7-run-$tool-sbom.json, 7-run-$tool-sbom.log, 7-run-$tool-purls.txt
 function 7_sbom_at_runtime() {
     if [ ! "$executable_jar" == "true" ]; then
         printf "\n7) Skip creating runtime SBOMs\n"
