@@ -1,0 +1,36 @@
+
+Hashes only appearing in immutables/3-git-cdxg-comp-hashes.txt:
+3145f821b5cd10abcdc5f925baa5fffa6f1b628f org.junit.platform/junit-platform-commons@1.9.1 
+8ac9e16d933b6fb43bc7f576336b8f4d7eb5ba12 junit/junit@4.13.2 
+83591e5089d6cea5f324aa3ecca9b19d5a275803 org.junit.platform/junit-platform-engine@1.9.1 
+7bb53fbc0173e9f6a9d21d58297af94b1f2f9ce1 org.junit.jupiter/junit-jupiter-api@5.9.1 
+7fadf57620c8b8abdf7519533e5527367cb51f09 org.objenesis/objenesis@3.2 
+0a85d4d74de5ce7a4dd5cbbd337ced6af2740acd net.bytebuddy/byte-buddy@1.11.13 
+f9cdc14ea4a3573c0c0366d47d5ca960be24ddb6 org.mockito/mockito-core@3.12.4 
+8c7aaa0ef9863fa89a711bfc5d8e2e0affa0d67f net.bytebuddy/byte-buddy-agent@1.11.13 
+4785a3c21320980282f9f33d0d1264a69040538f org.hamcrest/hamcrest-library@1.3 
+4c97e4ce083cb5fc5ff59f66d62896b30da0853b org.junit.vintage/junit-vintage-engine@5.9.1 
+ffcd1013edaeee112be11fcddeb38882d79238de org.junit.jupiter/junit-jupiter-params@5.9.1 
+6cf2c08c809e094c4ad8bce79ebc41ad74c4ba48 org.immutables/testing@2.10.1 
+1bf771097bde296c3ab174861954e8aafaaf2e94 org.junit.jupiter/junit-jupiter-engine@5.9.1 
+42a25dc3219429f0e5d060061f71acb49bf010a0 org.hamcrest/hamcrest-core@1.3 
+28c11eb91f9b6d8e200631d46e20a7f407f2a046 org.opentest4j/opentest4j@1.2.0 
+
+Hashes appearing both in immutables/3-git-cycl-comp-hashes.txt and immutables/3-git-cdxg-comp-hashes.txt:
+ba035118bc8bac37d7eff77700720999acd9986d com.google.j2objc/j2objc-annotations@1.3 == com.google.j2objc/j2objc-annotations@1.3 
+a3662cf1c1d592893ffe08727f78db35392fa302 org.ow2.asm/asm-tree@7.1 == org.ow2.asm/asm-tree@7.1 
+b421526c5f297295adef1c886e5246c39d4ac629 com.google.guava/listenablefuture@9999.0-empty-to-avoid-conflict-with-guava == com.google.guava/listenablefuture@9999.0-empty-to-avoid-conflict-with-guava 
+fed0d73e033e872a497f49562d5496167abe60be org.parboiled/parboiled-java@1.3.1 == org.parboiled/parboiled-java@1.3.1 
+e2925eab3120c240d1258b7aababacb9a45b2d62 org.immutables/trees@2.7.5 == org.immutables/trees@2.7.5 
+25ea2e8b0c338a877313bd4672d3fe056ea78f0d com.google.code.findbugs/jsr305@3.0.2 == com.google.code.findbugs/jsr305@3.0.2 
+5b0b0f8cdb6c90582302ffcf5c20447206122f48 org.ow2.asm/asm-util@7.1 == org.ow2.asm/asm-util@7.1 
+379e0250f7a4a42c66c5e94e14d4c4491b3c2ed3 org.ow2.asm/asm-analysis@7.1 == org.ow2.asm/asm-analysis@7.1 
+8ddbc8769f73309fe09b54c5951163f10b0d89fa com.google.guava/guava@30.0-jre == com.google.guava/guava@30.0-jre 
+fa29aa438674ff19d5e1386d2c3527a0267f291e org.ow2.asm/asm@7.1 == org.ow2.asm/asm@7.1 
+939cbb96d26434ee9701effdd2f11a68ec444445 org.immutables/generator-processor@2.10.1 == org.immutables/generator-processor@2.10.1 
+2f50520c8abea66fbd8d26e481d3aef5c673b510 org.checkerframework/checker-qual@3.5.0 == org.checkerframework/checker-qual@3.5.0 
+c863e0920201d53f891ad2bdd5076bf231d45b3d org.parboiled/parboiled-core@1.3.1 == org.parboiled/parboiled-core@1.3.1 
+1dcf1de382a0bf95a3d8b0849546c88bac1292c9 com.google.guava/failureaccess@1.0.1 == com.google.guava/failureaccess@1.0.1 
+148f9bc3111abe2569f6b1483af22583496ad5b5 org.immutables/metainf@2.7.5 == org.immutables/metainf@2.7.5 
+552942042f699869fd09ae198a5621487b9fe27b org.immutables/generator@2.10.1 == org.immutables/generator@2.10.1 
+dac170e4594de319655ffb62f41cbd6dbb5e601e com.google.errorprone/error_prone_annotations@2.3.4 == com.google.errorprone/error_prone_annotations@2.3.4 

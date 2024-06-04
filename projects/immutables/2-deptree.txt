@@ -1,0 +1,33 @@
+org.immutables:metainf:jar:2.10.1
++- org.immutables:generator:jar:2.10.1:compile
+|  \- com.google.guava:guava:jar:30.0-jre:compile
+|     +- com.google.guava:failureaccess:jar:1.0.1:compile
+|     +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+|     +- org.checkerframework:checker-qual:jar:3.5.0:compile
+|     +- com.google.errorprone:error_prone_annotations:jar:2.3.4:compile
+|     \- com.google.j2objc:j2objc-annotations:jar:1.3:compile
++- org.immutables:generator-processor:jar:2.10.1:provided
+|  +- org.immutables:trees:jar:2.7.5:provided
+|  \- org.parboiled:parboiled-java:jar:1.3.1:provided
+|     +- org.parboiled:parboiled-core:jar:1.3.1:provided
+|     +- org.ow2.asm:asm:jar:7.1:provided
+|     +- org.ow2.asm:asm-tree:jar:7.1:provided
+|     +- org.ow2.asm:asm-analysis:jar:7.1:provided
+|     \- org.ow2.asm:asm-util:jar:7.1:provided
++- org.immutables:metainf:jar:2.7.5:provided
++- org.immutables:testing:jar:2.10.1:test
+|  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.1:test
+|  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+|  |  \- org.junit.platform:junit-platform-commons:jar:1.9.1:test
+|  +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.1:test
+|  |  \- org.junit.platform:junit-platform-engine:jar:1.9.1:test
+|  +- org.junit.jupiter:junit-jupiter-params:jar:5.9.1:test
+|  +- org.junit.vintage:junit-vintage-engine:jar:5.9.1:test
+|  +- junit:junit:jar:4.13.2:test
+|  +- org.hamcrest:hamcrest-core:jar:1.3:test
+|  +- org.hamcrest:hamcrest-library:jar:1.3:test
+|  \- org.mockito:mockito-core:jar:3.12.4:test
+|     +- net.bytebuddy:byte-buddy:jar:1.11.13:test
+|     +- net.bytebuddy:byte-buddy-agent:jar:1.11.13:test
+|     \- org.objenesis:objenesis:jar:3.2:test
+\- com.google.code.findbugs:jsr305:jar:3.0.2:provided
