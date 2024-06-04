@@ -1,7 +1,7 @@
 com.erudika:para-jar:jar:1.50.0
 +- com.erudika:para-server:jar:1.50.0:compile
 |  +- com.erudika:para-core:jar:1.50.0:compile
-|  |  +- software.amazon.awssdk:auth:jar:2.25.61:compile (version selected from constraint [2.21.23,))
+|  |  +- software.amazon.awssdk:auth:jar:2.25.61:compile
 |  |  |  \- software.amazon.eventstream:eventstream:jar:1.0.1:compile
 |  |  +- io.github.classgraph:classgraph:jar:4.8.168:compile
 |  |  +- jakarta.ws.rs:jakarta.ws.rs-api:jar:3.1.0:compile
@@ -147,7 +147,7 @@ com.erudika:para-jar:jar:1.50.0
 |  |  |  +- org.glassfish.hk2:hk2-api:jar:3.0.6:compile
 |  |  |  \- org.glassfish.hk2:hk2-utils:jar:3.0.6:compile
 |  |  \- org.javassist:javassist:jar:3.30.2-GA:compile
-|  +- software.amazon.awssdk:sts:jar:2.25.61:compile (version selected from constraint [2.21.23,))
+|  +- software.amazon.awssdk:sts:jar:2.25.61:compile
 |  |  +- software.amazon.awssdk:aws-query-protocol:jar:2.25.61:compile
 |  |  +- software.amazon.awssdk:protocol-core:jar:2.25.61:compile
 |  |  +- software.amazon.awssdk:profiles:jar:2.25.61:compile
@@ -181,17 +181,17 @@ com.erudika:para-jar:jar:1.50.0
 |  |     |  \- io.netty:netty-transport-native-unix-common:jar:4.1.108.Final:runtime
 |  |     +- io.netty:netty-transport-classes-epoll:jar:4.1.108.Final:runtime
 |  |     \- io.netty:netty-resolver:jar:4.1.108.Final:runtime
-|  +- software.amazon.awssdk:dynamodb:jar:2.25.61:compile (version selected from constraint [2.21.23,))
+|  +- software.amazon.awssdk:dynamodb:jar:2.25.61:compile
 |  |  \- software.amazon.awssdk:aws-json-protocol:jar:2.25.61:compile
-|  +- software.amazon.awssdk:s3:jar:2.25.61:compile (version selected from constraint [2.21.23,))
+|  +- software.amazon.awssdk:s3:jar:2.25.61:compile
 |  |  +- software.amazon.awssdk:aws-xml-protocol:jar:2.25.61:compile
 |  |  +- software.amazon.awssdk:arns:jar:2.25.61:compile
 |  |  +- software.amazon.awssdk:crt-core:jar:2.25.61:compile
 |  |  +- software.amazon.awssdk:checksums:jar:2.25.61:compile
 |  |  \- software.amazon.awssdk:checksums-spi:jar:2.25.61:compile
-|  +- software.amazon.awssdk:ses:jar:2.25.61:compile (version selected from constraint [2.21.23,))
-|  +- software.amazon.awssdk:sqs:jar:2.25.61:compile (version selected from constraint [2.21.23,))
-|  +- software.amazon.awssdk:applicationautoscaling:jar:2.25.61:compile (version selected from constraint [2.21.23,))
+|  +- software.amazon.awssdk:ses:jar:2.25.61:compile
+|  +- software.amazon.awssdk:sqs:jar:2.25.61:compile
+|  +- software.amazon.awssdk:applicationautoscaling:jar:2.25.61:compile
 |  +- com.google.inject:guice:jar:7.0.0:compile
 |  |  +- aopalliance:aopalliance:jar:1.0:compile
 |  |  \- com.google.guava:guava:jar:31.0.1-jre:compile

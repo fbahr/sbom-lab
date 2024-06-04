@@ -1,5 +1,5 @@
 
-PURLs only appearing in para/2-exp-purls_v2.txt:
+PURLs only appearing in projects/para/2-exp-purls_v2.txt:
 aopalliance/aopalliance@1.0
 ch.qos.logback/logback-classic@1.5.3
 ch.qos.logback/logback-core@1.5.3
@@ -131,7 +131,9 @@ org.springframework/spring-webmvc@6.1.6
 org.xerial/sqlite-jdbc@3.45.2.0
 software.amazon.awssdk/annotations@2.25.61
 software.amazon.awssdk/apache-client@2.25.61
+software.amazon.awssdk/applicationautoscaling@2.25.61
 software.amazon.awssdk/arns@2.25.61
+software.amazon.awssdk/auth@2.25.61
 software.amazon.awssdk/aws-core@2.25.61
 software.amazon.awssdk/aws-json-protocol@2.25.61
 software.amazon.awssdk/aws-query-protocol@2.25.61
@@ -139,6 +141,7 @@ software.amazon.awssdk/aws-xml-protocol@2.25.61
 software.amazon.awssdk/checksums-spi@2.25.61
 software.amazon.awssdk/checksums@2.25.61
 software.amazon.awssdk/crt-core@2.25.61
+software.amazon.awssdk/dynamodb@2.25.61
 software.amazon.awssdk/endpoints-spi@2.25.61
 software.amazon.awssdk/http-auth-aws@2.25.61
 software.amazon.awssdk/http-auth-spi@2.25.61
@@ -151,12 +154,16 @@ software.amazon.awssdk/netty-nio-client@2.25.61
 software.amazon.awssdk/profiles@2.25.61
 software.amazon.awssdk/protocol-core@2.25.61
 software.amazon.awssdk/regions@2.25.61
+software.amazon.awssdk/s3@2.25.61
 software.amazon.awssdk/sdk-core@2.25.61
+software.amazon.awssdk/ses@2.25.61
+software.amazon.awssdk/sqs@2.25.61
+software.amazon.awssdk/sts@2.25.61
 software.amazon.awssdk/third-party-jackson-core@2.25.61
 software.amazon.awssdk/utils@2.25.61
 software.amazon.eventstream/eventstream@1.0.1
 
-PURLs only appearing in para/5-pkg-jbom-purls_v2.txt:
+PURLs only appearing in projects/para/5-pkg-jbom-purls_v2.txt:
 aopalliance/aopalliance@null
 ch.qos.logback/logback-classic@null
 ch.qos.logback/logback-core@null
@@ -470,7 +477,7 @@ software.amazon.cryptools/AmazonCorrettoCryptoProvider@1.1.0
 software.amazon.eventstream/eventstream@null
 xerces/xercesImpl@null
 
-PURLs appearing both in para/2-exp-purls_v2.txt and para/5-pkg-jbom-purls_v2.txt:
+PURLs appearing both in projects/para/2-exp-purls_v2.txt and projects/para/5-pkg-jbom-purls_v2.txt:
 ch.qos.logback/logback-access@1.4.14
 com.fasterxml.jackson.core/jackson-annotations@2.17.0
 com.fasterxml.jackson.core/jackson-core@2.17.0
@@ -538,7 +545,7 @@ org.jsoup/jsoup@1.17.2
 org.nibor.autolink/autolink@0.6.0
 org.yaml/snakeyaml@2.2
 
-Unresolved PURLs appearing in para/5-pkg-jbom-purls_v2.txt:
+Unresolved PURLs appearing in projects/para/5-pkg-jbom-purls_v2.txt:
 ${conscrypt.groupId}/${conscrypt.artifactId}@null
 ${project.groupId}/${tcnative.artifactId}@null
 ${project.groupId}/byte-buddy-dep@null

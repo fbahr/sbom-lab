@@ -1,5 +1,5 @@
 
-PURLs only appearing in para/2-exp-purls_v2.txt:
+PURLs only appearing in projects/para/2-exp-purls_v2.txt:
 aopalliance/aopalliance@1.0
 com.github.ben-manes.caffeine/caffeine@3.1.8
 com.google.inject/guice@7.0.0
@@ -48,7 +48,7 @@ org.springframework/spring-web@6.1.6
 org.springframework/spring-webmvc@6.1.6
 software.amazon.awssdk/third-party-jackson-core@2.25.61
 
-PURLs only appearing in para/5-pkg-sbom-purls_v2.txt:
+PURLs only appearing in projects/para/5-pkg-sbom-purls_v2.txt:
 HikariCP@5.1.0
 amqp-client@5.20.0
 angus-activation@2.0.2
@@ -253,13 +253,6 @@ sdk-core@2.25.61
 ses@2.25.61
 slf4j-api@2.0.13
 snakeyaml@2.2
-software.amazon.awssdk/applicationautoscaling@2.25.61
-software.amazon.awssdk/auth@2.25.61
-software.amazon.awssdk/dynamodb@2.25.61
-software.amazon.awssdk/s3@2.25.61
-software.amazon.awssdk/ses@2.25.61
-software.amazon.awssdk/sqs@2.25.61
-software.amazon.awssdk/sts@2.25.61
 spatial4j@0.8
 spring-aop@6.1.6
 spring-beans@6.1.6
@@ -291,7 +284,7 @@ utils@2.25.61
 woodstox-core@6.6.1
 xmlsec@2.2.3
 
-PURLs appearing both in para/2-exp-purls_v2.txt and para/5-pkg-sbom-purls_v2.txt:
+PURLs appearing both in projects/para/2-exp-purls_v2.txt and projects/para/5-pkg-sbom-purls_v2.txt:
 ch.qos.logback/logback-access@1.4.14
 ch.qos.logback/logback-classic@1.5.3
 ch.qos.logback/logback-core@1.5.3
@@ -443,7 +436,9 @@ org.xerial/sqlite-jdbc@3.45.2.0
 org.yaml/snakeyaml@2.2
 software.amazon.awssdk/annotations@2.25.61
 software.amazon.awssdk/apache-client@2.25.61
+software.amazon.awssdk/applicationautoscaling@2.25.61
 software.amazon.awssdk/arns@2.25.61
+software.amazon.awssdk/auth@2.25.61
 software.amazon.awssdk/aws-core@2.25.61
 software.amazon.awssdk/aws-json-protocol@2.25.61
 software.amazon.awssdk/aws-query-protocol@2.25.61
@@ -451,6 +446,7 @@ software.amazon.awssdk/aws-xml-protocol@2.25.61
 software.amazon.awssdk/checksums-spi@2.25.61
 software.amazon.awssdk/checksums@2.25.61
 software.amazon.awssdk/crt-core@2.25.61
+software.amazon.awssdk/dynamodb@2.25.61
 software.amazon.awssdk/endpoints-spi@2.25.61
 software.amazon.awssdk/http-auth-aws@2.25.61
 software.amazon.awssdk/http-auth-spi@2.25.61
@@ -463,6 +459,10 @@ software.amazon.awssdk/netty-nio-client@2.25.61
 software.amazon.awssdk/profiles@2.25.61
 software.amazon.awssdk/protocol-core@2.25.61
 software.amazon.awssdk/regions@2.25.61
+software.amazon.awssdk/s3@2.25.61
 software.amazon.awssdk/sdk-core@2.25.61
+software.amazon.awssdk/ses@2.25.61
+software.amazon.awssdk/sqs@2.25.61
+software.amazon.awssdk/sts@2.25.61
 software.amazon.awssdk/utils@2.25.61
 software.amazon.eventstream/eventstream@1.0.1
