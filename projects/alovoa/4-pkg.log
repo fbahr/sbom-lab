@@ -1,0 +1,43 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------------< com.alovoa:alovoa >--------------------------
+[INFO] Building alovoa 1.1.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.8.10:prepare-agent (jacoco-initialize) @ alovoa ---
+[INFO] argLine set to -javaagent:/home/fbahr/.m2/repository/org/jacoco/org.jacoco.agent/0.8.10/org.jacoco.agent-0.8.10-runtime.jar=destfile=/home/fbahr/Projects/IAS-SBOMLAB/sbom-lab/alovoa/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ alovoa ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 138 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ alovoa ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ alovoa ---
+[INFO] Copying 9 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ alovoa ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.1.2:test (default-test) @ alovoa ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.8.10:report (jacoco-site) @ alovoa ---
+[INFO] Loading execution data file /home/fbahr/Projects/IAS-SBOMLAB/sbom-lab/alovoa/target/jacoco.exec
+[INFO] Analyzed bundle 'alovoa' with 135 classes
+[INFO] 
+[INFO] --- minify-maven-plugin:2.0.1:minify (default-minify) @ alovoa ---
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.005 s
+[INFO] Finished at: 2024-06-04T13:13:05+02:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal com.github.buckelieg:minify-maven-plugin:2.0.1:minify (default-minify) on project alovoa: Execution default-minify of goal com.github.buckelieg:minify-maven-plugin:2.0.1:minify failed: basedir src/main/resources/static/css does not exist -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/PluginExecutionException
